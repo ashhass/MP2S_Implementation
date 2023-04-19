@@ -47,5 +47,5 @@ if LOAD_MODEL:
 
 # check_accuracy(val_loader, model, device=DEVICE) 
 save_predictions_as_imgs(
-            val_loader, model, folder='./test', device=DEVICE
+            train_loader, model, folder='./test', device=DEVICE
             ) 

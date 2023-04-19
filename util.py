@@ -28,7 +28,7 @@ def get_loaders(
 ):
     train_ds = CustomDataset(
         image_dir=train_dir,
-        transform=transform,
+        transform=transform, 
     )
 
     train_loader = DataLoader(

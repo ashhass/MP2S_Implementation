@@ -12,6 +12,7 @@ from util import (
     save_checkpoint,
     get_loaders, 
 ) 
+from loss import MS_SSIM
 import matplotlib.pyplot as plt 
 import numpy as np
 import timm
@@ -24,7 +25,7 @@ IMAGE_WIDTH = 856
 IMAGE_HEIGHT = 480
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 2
-NUM_EPOCHS = 1
+NUM_EPOCHS = 10
 NUM_WORKERS = 8
 PIN_MEMORY = True
 LOAD_MODEL = False 
@@ -48,10 +49,10 @@ def main():
     ) 
     
     model = Conv_AE_LSTM().to(DEVICE) 
-    loss_fn = nn.BCEWithLogitsLoss() # change to reconstruction loss 
+    loss_fn = MS_SSIM() 
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
-    train_loader, val_loader = get_loaders(
+    train_loader, val_loader = get_loaders( 
         TRAIN_DIR,
         VAL_DIR,
         BATCH_SIZE,
@@ -107,4 +108,8 @@ def main():
         print(f'EPOCH NUMBER :  {epoch}')
         epoch+=1
 
-writer.flush()
+writer.flush() 
+
+
+if __name__ == "__main__":
+    main() 
