@@ -17,7 +17,7 @@ class Conv_AE_LSTM(nn.Module):
         super().__init__()
 
         self.encoder = nn.Sequential(
-            nn.Conv2d(3, 64, kernel_size=(10,10), stride=2),
+            nn.Conv2d(1, 64, kernel_size=(10,10), stride=2),
             nn.ReLU(),
             nn.Conv2d(64, 128, kernel_size=(6,6), stride=2),
             nn.ReLU(), 
@@ -26,7 +26,7 @@ class Conv_AE_LSTM(nn.Module):
         self.decoder = nn.Sequential(
             nn.ConvTranspose2d(128, 64, kernel_size=(6,6), stride=2),
             nn.ReLU(),
-            nn.ConvTranspose2d(64, 3, kernel_size=(10,10), stride=2),
+            nn.ConvTranspose2d(64, 1, kernel_size=(10,10), stride=2),
             nn.ReLU(), 
 
         )

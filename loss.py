@@ -1,4 +1,4 @@
-''' Code taken from https://github.com/VainF/pytorch-msssim/tree/master/pytorch_msssim'''
+''' Code adopted from https://github.com/VainF/pytorch-msssim/tree/master/pytorch_msssim'''
 
 import warnings
 
@@ -308,4 +308,4 @@ class MS_SSIM(torch.nn.Module):
             win=self.win,
             weights=self.weights,
             K=self.K,
-        )
+        ) 

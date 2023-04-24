@@ -24,21 +24,20 @@ LEARNING_RATE = 1e-6
 IMAGE_WIDTH = 856
 IMAGE_HEIGHT = 480
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-BATCH_SIZE = 2
+BATCH_SIZE = 1
 NUM_EPOCHS = 10
 NUM_WORKERS = 8
 PIN_MEMORY = True
 LOAD_MODEL = False 
 
 
-TRAIN_DIR = '/y/ayhassen/anomaly_detection/shanghaitech/training_set/videos'
-VAL_DIR = ''
+TRAIN_DIR = '/y/ayhassen/anomaly_detection/shanghaitech/training_set/frames'
+VAL_DIR = '/y/ayhassen/anomaly_detection/shanghaitech/training_set/frames'   # modify to actual validation path
 
 
 def main():
     transform = A.Compose(
         [
-            A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
             A.Normalize(
                 mean=[0.0, 0.0, 0.0],
                 std=[1.0, 1.0, 1.0],
@@ -49,10 +48,11 @@ def main():
     ) 
     
     model = Conv_AE_LSTM().to(DEVICE) 
-    loss_fn = MS_SSIM() 
+    # loss_fn = MS_SSIM(channel=1)  # set channel to 1 considering our input is grayscale
+    loss_fn = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
-    train_loader, val_loader = get_loaders( 
+    train_loader, val_loader = get_loaders(  
         TRAIN_DIR,
         VAL_DIR,
         BATCH_SIZE,
@@ -70,12 +70,11 @@ def main():
         count = 0
         running_loss = 0.0
         loss_values = []
-        for batch_idx, (data, targets) in enumerate(train_loader):
-            data = data.to(device=DEVICE)
-            targets = targets.float().unsqueeze(1).to(device=DEVICE)
+        for batch_idx, targets in enumerate(train_loader):
+            targets = targets.unsqueeze(0).to(device=DEVICE, dtype=torch.float32) / 255
             # forward
             with torch.cuda.amp.autocast(): 
-                predictions = model(data)
+                predictions = model(targets).to(dtype=torch.float32) 
                 loss = loss_fn(predictions, targets) 
                 writer.add_scalar("Loss(train) - Epoch", loss, epoch) 
 
@@ -104,7 +103,7 @@ def main():
         writer.add_scalar("Loss(train) - Epoch", loss, epoch) 
     
 
-        save_checkpoint(checkpoint) 
+        save_checkpoint(checkpoint, "./checkpoints/modelv1.pth") 
         print(f'EPOCH NUMBER :  {epoch}')
         epoch+=1
 

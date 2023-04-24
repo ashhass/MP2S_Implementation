@@ -56,7 +56,7 @@ def get_loaders(
 
 def check_accuracy(loader, model, device="cuda"):
 
-    # implement the reconstruction loss here
+    # implement the reconstruction metric here
 
     model.train()
 
@@ -66,19 +66,17 @@ def save_predictions_as_imgs(
 ):
     model.eval()
     count = 1
-    for idx, (x, y) in enumerate(loader): 
+    for idx, y in enumerate(loader): 
         if count <= 10:
-            x = x.to(device=device)
-            y = y.to(device=device)
+            y = y.unsqueeze(0).to(device='cuda', dtype=torch.float32) / 255
             with torch.no_grad():
-                preds = torch.sigmoid(model(x))
-                preds = (preds > 0.1).float()       
+                preds = torch.sigmoid(model(y))      
 
                 torchvision.utils.save_image(
                     preds, f"{folder}/pred_{idx}.png" 
                 )
                 torchvision.utils.save_image(
-                    x, f"{folder}/actual_{idx}.png"   
+                    y, f"{folder}/actual_{idx}.png"   
                 )    # this should be the actual optic flow map and not the video frame
                 
                 count+=1
