@@ -1,9 +1,17 @@
-'''
+
+'''   VERSION 01
     1. Construct bare minimum convolutional autoencoder layers
     2. Add convolutional LSTM layers
     3. Modularize your code
     4. Comment throughout 
     5. Visualize encoded features
+'''
+
+'''    VERSION 02
+    1. CONSTRUCT AN ENSEMBLE NETWORK OF ANOMALY DETECTION USING OPTIC FLOW AND ACTION RECOGNITION NETWORK (to help reduce the false negatives) (MAJPRITY VOTING)
+    2. DEFINE A SET OF SEQUENTIAL ACTIONS THAT WOULD LEAD TO A POSSIBLE INCIDENT (combine that with the optic flow method to detect anomalies early on)
+    3. TEST THAT ON LOCAL VIDEO COLLECTION
+
 '''
 import torch
 import torchvision

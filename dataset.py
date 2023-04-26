@@ -21,7 +21,7 @@ class CustomDataset(Dataset):
         self.images = os.listdir(f'{self.image_dir}')   
 
     def __len__(self):
-        return len(self.images) - 20
+        return len(self.images) 
 
     def __getitem__(self, index):
 

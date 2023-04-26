@@ -54,12 +54,40 @@ def get_loaders(
 
     return train_loader, val_loader
 
-def check_accuracy(loader, model, device="cuda"):
+def endpoint_error(loader, model, device="cuda"):
+    epe = 0
+    model.eval()
+    with torch.no_grad():
+        for i, y_true in enumerate(loader):
+            y_true = y_true.unsqueeze(0).to(device=device, dtype=torch.float32) / 255
+            y_pred = torch.sigmoid(model(y_true))
 
-    # implement the reconstruction metric here
+            y_pred = y_pred.detach().cpu().numpy()
+            y_true = y_true.detach().cpu().numpy()
+
+            error_vector = np.linalg.norm(y_true - y_pred, axis=-1)
+            epe += np.mean(error_vector)
+            print(i, epe / len(loader))
+            
+
+    print(f'End point Error: {epe / len(loader)}')
+    model.train() 
+
+def mse(loader, model, device='cuda'):
+    model.eval()
+    with torch.no_grad():
+        for y_true in loader:
+            y_true = y_true.unsqueeze(0).to(device=device, dtype=torch.float32) / 255
+            y_pred = torch.sigmoid(model(y_true))
+
+            y_pred = y_pred.detach().cpu().numpy()
+            y_true = y_true.detach().cpu().numpy()
+
+            mse = np.mean(np.power(y_true - y_pred, 2), axis=1)
+            reconstruction_error = np.mean(mse)
+            print(reconstruction_error)
 
     model.train()
-
 
 def save_predictions_as_imgs(
     loader, model, folder, device="cuda"
@@ -68,7 +96,7 @@ def save_predictions_as_imgs(
     count = 1
     for idx, y in enumerate(loader): 
         if count <= 10:
-            y = y.unsqueeze(0).to(device='cuda', dtype=torch.float32) / 255
+            y = y.unsqueeze(0).to(device='cuda', dtype=torch.float32) / 255 
             with torch.no_grad():
                 preds = torch.sigmoid(model(y))      
 

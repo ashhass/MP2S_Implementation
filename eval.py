@@ -44,7 +44,7 @@ model = Conv_AE_LSTM().to(DEVICE)
 if LOAD_MODEL:
     load_checkpoint(torch.load("./checkpoints/modelv1.pth"), model)
 
-# check_accuracy(val_loader, model, device=DEVICE) 
-save_predictions_as_imgs(
-            train_loader, model, folder='./test', device=DEVICE
-            ) 
+endpoint_error(train_loader, model, device=DEVICE) 
+# save_predictions_as_imgs(
+#             train_loader, model, folder='./test', device=DEVICE
+#             ) 
