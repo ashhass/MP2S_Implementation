@@ -71,7 +71,8 @@ def main():
         running_loss = 0.0
         loss_values = []
         for batch_idx, targets in enumerate(train_loader):
-            targets = targets.unsqueeze(0).to(device=DEVICE, dtype=torch.float32) / 255
+            targets = targets.unsqueeze(1).to(device=DEVICE, dtype=torch.float32) / 255
+            targets = torch.reshape(targets, (targets.shape[2], targets.shape[0], targets.shape[1], targets.shape[4], targets.shape[3]))
             # forward
             with torch.cuda.amp.autocast(): 
                 predictions = model(targets).to(dtype=torch.float32) 

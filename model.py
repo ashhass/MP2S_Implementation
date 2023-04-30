@@ -8,17 +8,17 @@
 '''
 
 '''    VERSION 02
-    1. CONSTRUCT AN ENSEMBLE NETWORK OF ANOMALY DETECTION USING OPTIC FLOW AND ACTION RECOGNITION NETWORK (to help reduce the false negatives) (MAJPRITY VOTING)
-    2. DEFINE A SET OF SEQUENTIAL ACTIONS THAT WOULD LEAD TO A POSSIBLE INCIDENT (combine that with the optic flow method to detect anomalies early on)
-    3. TEST THAT ON LOCAL VIDEO COLLECTION
+    1. CONSTRUCT AN ENSEMBLE NETWORK OF ANOMALY DETECTION USING OPTIC FLOW AND ACTION RECOGNITION NETWORK (to help reduce the false negatives) (MAJORITY VOTING)
+    2. TEST THAT ON LOCAL VIDEO COLLECTION
 
 '''
 import torch
 import torchvision
 import torch.nn as nn
-import cv2
+import cv2 
 import numpy as np
 import matplotlib.pyplot as plt
+from lstm import ConvLSTM
 
 class Conv_AE_LSTM(nn.Module):
     def __init__(self):
@@ -40,18 +40,15 @@ class Conv_AE_LSTM(nn.Module):
         )
 
     def forward(self, x):
-        encoded = self.encoder(x)
+        print(f'X:  {x.shape}')
+        # encoded = self.encoder(x)
+
+        # shape, filter_size, input_channels, num_features, num_layers
+        convlstm = ConvLSTM((856, 480), 3, 1, 10, 2)
+        hidden_state = convlstm.init_hidden(batch_size=1)
+        encoded = convlstm(x, hidden_state)
+
+        print(f'Encoded: {encoded.shape}')
         decoded = self.decoder(encoded)
 
         return decoded
-
-
-
-# flow_maps = [cv2.imread(f'./flow/flow{x}.png') for x in range(7)]
-# image = np.stack(flow_maps)
-# image = torch.from_numpy(image).float().permute(0, 3, 1, 2)
-
-# model = Conv_AE_LSTM()
-# output = model(image) 
-
-# torchvision.utils.save_image(output, './out.png') 

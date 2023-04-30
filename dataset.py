@@ -21,7 +21,7 @@ class CustomDataset(Dataset):
         self.images = os.listdir(f'{self.image_dir}')   
 
     def __len__(self):
-        return len(self.images) 
+        return len(self.images) - 20
 
     def __getitem__(self, index):
 
@@ -38,17 +38,16 @@ class CustomDataset(Dataset):
             augmentations = self.transform(image=image, flowMap=flowMap) 
             flowMap = augmentations["flowMap"] 
 
-        
-        return flowMap 
+        return flowMap
  
 
     def extract_flowMap(self, frame_list):  # returns stacked flow map 
 
         flow = None
         flowMap_list = []
-        for i in range(len(frame_list) - 1):
+        for i in range(len(frame_list)):
             prev_frame_gray = cv2.cvtColor(frame_list[i], cv2.COLOR_BGR2GRAY)
-            next_frame_gray = cv2.cvtColor(frame_list[i + 1], cv2.COLOR_BGR2GRAY) 
+            next_frame_gray = cv2.cvtColor(frame_list[i + 1], cv2.COLOR_BGR2GRAY) if i + 1 < len(frame_list) else prev_frame_gray
 
             if flow is None:
                 flow = cv2.calcOpticalFlowFarneback(prev_frame_gray, next_frame_gray, None, 0.5, 3, 15, 3, 5, 1.2, 0)
@@ -61,5 +60,5 @@ class CustomDataset(Dataset):
             flowMap_list.append(flow_norm[:,:,0])
             prev_frame_gray = next_frame_gray
 
-        return np.hstack(flowMap_list)  
+        return np.stack(flowMap_list)  
     

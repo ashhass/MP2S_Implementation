@@ -14,7 +14,7 @@ PIN_MEMORY = True
 LOAD_MODEL = True
 
 TRAIN_DIR ='/y/ayhassen/anomaly_detection/shanghaitech/training_set/frames'
-VAL_DIR ='/y/ayhassen/anomaly_detection/shanghaitech/training_set/frames'
+VAL_DIR ='/y/ayhassen/anomaly_detection/shanghaitech/training_set/frames'   
 
 
 transform = A.Compose(
