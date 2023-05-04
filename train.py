@@ -6,7 +6,7 @@ from albumentations.pytorch import ToTensorV2
 from tqdm import tqdm, trange
 import torch.nn as nn
 import torch.optim as optim
-from model import Conv_AE_LSTM
+from model.model import Conv_AE_LSTM
 from util import (
     load_checkpoint,
     save_checkpoint,

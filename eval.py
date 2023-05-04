@@ -1,7 +1,7 @@
 from util import *  
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
-from model import Conv_AE_LSTM
+from model.model import Conv_AE_LSTM
 
 LEARNING_RATE = 1e-6
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"

@@ -28,7 +28,6 @@ class CLSTM_cell(nn.Module):
         
         hidden_state, memory_cell = hidden_state
         combined = torch.cat((input, hidden_state), dim=1)
-        print(combined.dtype, combined.shape)
         conv_combined = self.conv(combined) 
 
 
@@ -69,16 +68,16 @@ class ConvLSTM(nn.Module):
         super(ConvLSTM, self).__init__()
         
         self.shape = shape
-        self.input_chaneels = input_channels
+        self.input_channels = input_channels
         self.filter_size = filter_size
         self.num_features = num_features
         self.num_layers = num_layers
 
         cell_list = []
-        cell_list.append(CLSTM_cell(self.shape, self.input_chaneels, self.filter_size, self.num_features))
+        cell_list.append(CLSTM_cell(self.shape, self.input_channels, self.filter_size, self.num_features))
 
         for _ in range(self.num_layers):
-            cell_list.append(CLSTM_cell(self.shape, self.num_features, self.filter_size, self.num_features))
+            cell_list.append(CLSTM_cell(self.shape, self.input_channels, self.filter_size, self.num_features))
         
         self.cell_list = nn.ModuleList(cell_list) 
 
@@ -93,6 +92,7 @@ class ConvLSTM(nn.Module):
             hidden_channel = hidden_state[id]
             output = []
             for timestep in range(input.shape[0]):
+                print(input.shape[1], hidden_channel[1].shape)
                 hidden_channel = self.cell_list[id](input[timestep, ...], hidden_channel)
                 output.append(hidden_channel[0])
 

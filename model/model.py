@@ -18,7 +18,7 @@ import torch.nn as nn
 import cv2 
 import numpy as np
 import matplotlib.pyplot as plt
-from lstm import ConvLSTM
+from model.lstm import ConvLSTM
 
 class Conv_AE_LSTM(nn.Module):
     def __init__(self):
