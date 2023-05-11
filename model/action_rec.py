@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import division 
 
 import argparse, time, logging, os, sys, math
 
@@ -106,4 +106,4 @@ for epoch in range(epochs):
         (epoch, acc, train_loss / (i+1), time.time()-tic))
 
 # We can plot the metric scores with:
-train_history.plot()
+train_history.plot() 

@@ -73,10 +73,12 @@ def main():
         for batch_idx, targets in enumerate(train_loader):
             targets = targets.unsqueeze(1).to(device=DEVICE, dtype=torch.float32) / 255
             targets = torch.reshape(targets, (targets.shape[2], targets.shape[0], targets.shape[1], targets.shape[4], targets.shape[3]))
+            # targets = torch.reshape(targets, (targets.shape[1], targets.shape[0], targets.shape[3], targets.shape[2]))
             # forward
             with torch.cuda.amp.autocast(): 
                 predictions = model(targets).to(dtype=torch.float32) 
-                loss = loss_fn(predictions, targets) 
+                print(predictions.shape, targets.shape)
+                loss = loss_fn(predictions, targets[0,:,:,:,:]) 
                 writer.add_scalar("Loss(train) - Epoch", loss, epoch) 
 
             # backward 

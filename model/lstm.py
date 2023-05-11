@@ -1,3 +1,4 @@
+import sys
 import torch
 import torchvision
 import torch.nn as nn
@@ -9,30 +10,33 @@ from torch import Tensor
 
 
 class CLSTM_cell(nn.Module):
-    def __init__(self, shape, input_channels, filter_size, hidden_channels) -> None:
+    def __init__(self, shape, input_channels, filter_size, num_features) -> None:
         super(CLSTM_cell, self).__init__()
 
         self.shape = shape
-        self.input_channels = input_channels
-        self.hidden_channels = hidden_channels  
+        self.input_channels = input_channels 
+        self.num_features = num_features  
         self.filter_size = filter_size
-        self.padding = (filter_size - 1) / 2
+        self.stride = 1
+        self.padding = int((filter_size - 1) / 2)
         
         '''
             input channels: we concatenate the current input with the previous hidden state in order to learn a pattern between them
             output channels: we multiply this by 4 considering we need to learn four sets of filters corresponding to the input gate, forget gate, output gate and cell gate
         '''
-        self.conv = nn.Conv2d(in_channels=self.input_channels + self.hidden_channels, out_channels=4 * self.hidden_channels, kernel_size=self.filter_size, stride=1, padding=self.padding)
 
-    def forward(self, input, hidden_state):
+        self.conv = nn.Conv2d(in_channels=self.input_channels + self.num_features, out_channels=4 * self.num_features, kernel_size=self.filter_size, stride=self.stride, padding=self.padding)
+
+    def forward(self, input, hidden_states):
         
-        hidden_state, memory_cell = hidden_state
-        combined = torch.cat((input, hidden_state), dim=1)
+        hidden_state, memory_cell = hidden_states
+        combined = torch.cat((input, hidden_state), dim=1) 
         conv_combined = self.conv(combined) 
 
 
+
         # split the gates
-        gates = torch.split(conv_combined, self.hidden_channels, dim=1)
+        gates = torch.split(conv_combined, self.num_features, dim=1)
         input_gate, forget_gate, output_gate, cell_gate = gates
 
         input_gate = torch.sigmoid(input_gate)
@@ -44,7 +48,7 @@ class CLSTM_cell(nn.Module):
         memory_cell = forget_gate * memory_cell + input_gate * cell_gate
         
         # compute new hidden state
-        hidden_state = output_gate * torch.tanh(memory_cell)
+        hidden_state = output_gate * torch.tanh(memory_cell) 
 
         return hidden_state, memory_cell
 
@@ -52,7 +56,7 @@ class CLSTM_cell(nn.Module):
         '''
             Initialize all hidden layers to tensors of zeros
         '''
-        return (Tensor(torch.zeros(batch_size,self.hidden_channels,self.shape[0],self.shape[1])).cuda(), Tensor(torch.zeros(batch_size,self.hidden_channels,self.shape[0],self.shape[1])).cuda())
+        return (Tensor(torch.zeros(batch_size,self.num_features,self.shape[0],self.shape[1])).cuda(), Tensor(torch.zeros(batch_size,self.num_features,self.shape[0],self.shape[1])).cuda())
 
 
 class ConvLSTM(nn.Module):
@@ -74,10 +78,10 @@ class ConvLSTM(nn.Module):
         self.num_layers = num_layers
 
         cell_list = []
-        cell_list.append(CLSTM_cell(self.shape, self.input_channels, self.filter_size, self.num_features))
+        cell_list.append(CLSTM_cell(self.shape, self.input_channels, self.filter_size, self.num_features).cuda()) 
 
-        for _ in range(self.num_layers):
-            cell_list.append(CLSTM_cell(self.shape, self.input_channels, self.filter_size, self.num_features))
+        for _ in range(1, self.num_layers): # start from 1 because we already added one layer - that layer's input channel is the number of channels in the input image
+            cell_list.append(CLSTM_cell(self.shape, self.num_features, self.filter_size, self.num_features).cuda())
         
         self.cell_list = nn.ModuleList(cell_list) 
 
@@ -89,12 +93,11 @@ class ConvLSTM(nn.Module):
         next_hidden = [] 
 
         for id in range(self.num_layers):
-            hidden_channel = hidden_state[id]
-            output = []
+            hidden_channel = hidden_state[id] 
+            output = [] 
             for timestep in range(input.shape[0]):
-                print(input.shape[1], hidden_channel[1].shape)
                 hidden_channel = self.cell_list[id](input[timestep, ...], hidden_channel)
-                output.append(hidden_channel[0])
+                output.append(hidden_channel[0]) 
 
             next_hidden.append(hidden_channel)
             input = torch.cat(output, 0).view(input.size(0), *output[0].size())
