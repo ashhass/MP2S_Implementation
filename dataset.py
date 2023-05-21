@@ -21,14 +21,14 @@ class CustomDataset(Dataset):
         self.images = os.listdir(f'{self.image_dir}')   
 
     def __len__(self):
-        return len(self.images) - 20
+        return (len(self.images) - 20) // 100
 
     def __getitem__(self, index):
 
         img_path_list = [os.path.join(f'{self.image_dir}', self.images[index + x]) for x in range(8)] 
         image = np.array(Image.open(img_path_list[0]).convert('RGB')) 
 
-        image_list = []
+        image_list = [] 
         for images in img_path_list:
             image_list.append(np.array(Image.open(images).convert('RGB')))
 

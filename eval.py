@@ -1,3 +1,4 @@
+import os
 from util import *  
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
@@ -14,7 +15,7 @@ PIN_MEMORY = True
 LOAD_MODEL = True
 
 TRAIN_DIR ='/y/ayhassen/anomaly_detection/shanghaitech/training_set/frames'
-VAL_DIR ='/y/ayhassen/anomaly_detection/shanghaitech/training_set/frames'   
+VAL_DIR ='/y/ayhassen/anomaly_detection/shanghaitech/testing_set/testing/merged_frames'   
 
 
 transform = A.Compose(
@@ -44,7 +45,7 @@ model = Conv_AE_LSTM().to(DEVICE)
 if LOAD_MODEL:
     load_checkpoint(torch.load("./checkpoints/modelv1.pth"), model)
 
-endpoint_error(train_loader, model, device=DEVICE) 
+mse(train_loader, model, device=DEVICE) 
 # save_predictions_as_imgs(
 #             train_loader, model, folder='./test', device=DEVICE
 #             ) 

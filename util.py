@@ -76,16 +76,19 @@ def endpoint_error(loader, model, device="cuda"):
 def mse(loader, model, device='cuda'):
     model.eval()
     with torch.no_grad():
+        mse = 0
+        print(len(loader))
         for y_true in loader:
-            y_true = y_true.unsqueeze(0).to(device=device, dtype=torch.float32) / 255
-            y_pred = torch.sigmoid(model(y_true))
+            y_true = y_true.to(device=device, dtype=torch.float32) / 255
+            y_true = y_true.reshape(y_true.shape[1], y_true.shape[0], y_true.shape[2], y_true.shape[3])
+            y_pred = torch.sigmoid(model(y_true)) 
 
-            y_pred = y_pred.detach().cpu().numpy()
-            y_true = y_true.detach().cpu().numpy()
 
-            mse = np.mean(np.power(y_true - y_pred, 2), axis=1)
-            reconstruction_error = np.mean(mse)
-            print(reconstruction_error)
+            loss = torch.nn.MSELoss()(y_pred, y_true)
+            print(loss)
+        
+        reconstruction_error = loss / len(loader)
+        print(reconstruction_error) 
 
     model.train()
 

@@ -26,29 +26,30 @@ class Conv_AE_LSTM(nn.Module):
         super().__init__()
 
         self.encoder = nn.Sequential(
-            nn.Conv2d(1, 32, kernel_size=(10,10), stride=2),
+            nn.Conv2d(1, 64, kernel_size=(10,10), stride=2),
             nn.ReLU(),
-            nn.Conv2d(32, 64, kernel_size=(6,6), stride=2),
+            nn.Conv2d(64, 128, kernel_size=(6,6), stride=2),
             nn.ReLU(),  
         )
 
         self.decoder = nn.Sequential(
-            nn.ConvTranspose2d(64, 32,  kernel_size=(6,6), stride=2),
+            nn.ConvTranspose2d(128, 64,  kernel_size=(6,6), stride=2),
             nn.ReLU(),
-            nn.ConvTranspose2d(32, 1, kernel_size=(10,10), stride=2),
+            nn.ConvTranspose2d(64, 1, kernel_size=(10,10), stride=2),
             nn.ReLU(), 
 
         )
 
     def forward(self, x):
-        print(f'X:  {x.shape}')
-        encoded = self.encoder(x[0,:,:,:,:])
-
-        # shape, filter_size, input_channels, num_features, num_layers
-        convlstm = ConvLSTM((encoded.shape[2], encoded.shape[3]), 11, 1, 256, 1) 
-        hidden_state = convlstm.init_hidden(batch_size=1)
-        encoded_mid = convlstm(encoded, hidden_state) 
-        decoded = self.decoder(encoded[1][0,:,:,:,:]) 
+        # print(f'X:  {x.shape}')
+        encoded = self.encoder(x)
         
+        # shape, filter_size, input_channels, num_features, num_layers
+        # convlstm = ConvLSTM((encoded.shape[2], encoded.shape[3]), 11, 1, 256, 1) 
+        # hidden_state = convlstm.init_hidden(batch_size=1)
+        # encoded_mid = convlstm(encoded, hidden_state) 
+        # decoded = self.decoder(encoded[1][0,:,:,:,:]) 
+        
+        decoded = self.decoder(encoded)
 
         return decoded 

@@ -21,8 +21,8 @@ def extract_frames(training_path, frame_path, video):
         ret, frame = cap.read()
 
         if ret:
-            cv2.imwrite(f'{frame_path}/{video}_{count}.jpg', frame) 
-            count += 1
+            cv2.imwrite(f'{frame_path}/{video}/' + 'img_' + ('{:05d}').format(count) + '.jpg', frame)  
+            count += 1 
             print(count)
         else:
             break

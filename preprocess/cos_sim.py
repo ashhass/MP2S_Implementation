@@ -34,7 +34,9 @@ for count in range(800):
     elif num == 8:
         anomaly = extract_flowMap(anomaly_frame_list)
         normal = extract_flowMap(normal_frame_list)
-        similarity = F.cosine_similarity(torch.from_numpy(anomaly).view(1, -1).float(), torch.from_numpy(normal).view(1, -1).float()).item()
+        # similarity = F.cosine_similarity(torch.from_numpy(anomaly).view(1, -1).float(), torch.from_numpy(normal).view(1, -1).float()).item()
+        print(normal.shape)
+        similarity = torch.nn.MSELoss()(torch.from_numpy(anomaly).view(1, -1).float(), torch.from_numpy(normal).view(1, -1).float()).item()
         num = 0
         print(similarity)
         sim_list.append(similarity) 
