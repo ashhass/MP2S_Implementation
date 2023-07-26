@@ -2,9 +2,7 @@
 '''   VERSION 01
     1. Construct bare minimum convolutional autoencoder layers
     2. Add convolutional LSTM layers
-    3. Modularize your code
-    4. Comment throughout 
-    5. Visualize encoded features
+    3. Visualize encoded features
 '''
 
 '''    VERSION 02
