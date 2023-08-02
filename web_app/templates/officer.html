@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js" integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ==" crossorigin="anonymous"></script>
+
+    <div id="map">
+    </div>
+
+    <div id="demo"></div> 
+    <center>
+    <div id="form">
+    
+        <form method="post" name="mission" class="p-3 mt-3" > 
+            <input name="anomaly"  type="text" ud="input_anomaly" style="box-shadow: 2px 2px 2px 1px #EAE378;" class="form-control" placeholder="Anomaly Type" required/>
+              <br>
+              <select name="status" id="select" class="form-select" style="box-shadow: 2px 2px 2px 1px #EAE378;" required>
+                <option selected>Mission Status</option>
+                <option value="1">Complete</option>
+                <option value="2">Under Investigation</option>
+                <option value="3">Unresolved</option>
+              </select>
+
+              <input name="location"  type="hidden" value='{{data[0]}}' class="form-control"/>
+              <input name="officer_id"  type="hidden" value='{{data[1]}}' class="form-control"/>
+              <input name="start_time"  type="hidden" value='{{data[2]}}' class="form-control"/>
+              
+            
+              <a href="/officer_page" class="btn mt-3 btn_custom" style="background-color: red; width: 100%; color: white;" type="submit"> End Mission </a>
+        </form>
+    </div>
+
+    <form name="logout_form">
+        <input type="submit" style="background-color: #EAE378; color: white; margin-bottom: 15px;" onclick="logout()"  class="btn btn_logout btn-sm" class = 'nav' class="navbar-brand" value="LOGOUT"/>
+    </form> 
+</center>
+
+<script> 
+
+
+function getNotification() {
+    
+    $.ajax({
+        type: 'GET',
+        url: '/officer',
+    }); 
+
+    console.log("{{data}}");
+
+    // ajax call to get data from database
+    setTimeout(getNotification, 20000);   
+}  
+
+
+
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+        setTimeout(getLocation, 20000); 
+    }
+    else{
+        return 'No Browser Support';
+    }
+}
+
+// this should also call python function to save location in database every 30 minutes or so
+function showPosition(position){
+    var arr = [];
+    var directionsService = new google.maps.DirectionsService;
+    var directionsDisplay = new google.maps.DirectionsRenderer;
+    arr.push(position.coords.latitude);
+    arr.push(position.coords.longitude);
+
+    var map = new google.maps.Map(document.getElementById('map'), { 
+        center: { lat: position.coords.latitude, lng: position.coords.longitude },
+        zoom: 8
+    });
+
+    $.ajax({
+        type: 'POST',
+        url: '/location',
+        data: JSON.stringify(arr),
+        contentType: 'application/json',
+        dataType: 'json'
+    });
+
+    directionsDisplay.setMap(map);
+    if("{{data[3]}}" == 'True') {
+        displayRoute(directionsService, directionsDisplay)
+    }; 
+    
+   
+}; 
+
+function logout(){
+    $.ajax({
+        type: 'POST',
+        url: '/status'
+    });
+}
+
+
+
+function initMap() { 
+    var directionsService = new google.maps.DirectionsService;
+    var directionsDisplay = new google.maps.DirectionsRenderer;
+
+    // if ('{{origin}}' != '[]') displayRoute(directionsService, directionsDisplay);
+    // displayRoute(directionsService, directionsDisplay); 
+
+
+    // alert display
+    // if ('{{notify}}' == true) 
+    // alert('ATTENTION, YOU HAVE AN INCIDENT TO ATTEND TO');
+
+    getLocation(); 
+    getNotification();
+
+} 
+
+function displayRoute(directionsService, directionsDisplay){
+    directionsService.route({
+        origin: 'Addis Ababa Institute of Technology', // should be passed in from database 
+        destination:'Sengatera', 
+        travelMode: "DRIVING",
+    }, function(response, status){
+        if (status == 'OK') directionsDisplay.setDirections(response);
+        else window.alert('Request failed due to ' + status );
+    });
+} 
+
+
+// $(document).ready(function(){
+//     var socket = io();
+//     socket.on('response', function(msg) {
+//         console.log(msg.data);
+//         $('#log').append('<p>Received: ' + msg.data + '</p>');
+//     });
+
+//     // $('form#emit').submit(function(event) {
+//     //     socket.emit('my event', {data: $('#emit_data').val()});
+//     //     return false;
+//     // });
+// });
+
+</script>
+
+<script async defer src="//maps.googleapis.com/maps/api/js?key=AIzaSyA-F0YlMhOUj7O4HeTaHJmkfwcPjpdWQU8&callback=initMap"></script>
+{% endblock %}
+
+

@@ -1,0 +1,267 @@
+#camera{
+    color: black;
+    font-family: 'Code';
+    font-size: 18px;
+
+}
+
+.nav{
+    color: black;
+    margin-top: 0.5%;
+    margin-bottom: 1.5%;
+    font-weight: 600;
+}
+
+#camera_buttons{
+    /* margin-left: 20%; */
+    margin-top: 4%;
+}
+
+
+#div1{
+    width: 60%;
+    float: left;
+}
+
+#div2{
+    width: 40%;
+    float: right;
+}
+
+
+#btn_ignore{
+    float: left;
+}
+
+#btn_alert{
+    float: right;
+}
+
+#title{
+    float: left;
+    outline: 1px solid yellow;
+    /* margin-left: 10%; */
+}
+
+
+#login{
+    /* float: right; */
+    /* outline: 1px solid red; */
+    margin-right: 30%;
+    margin-top: 7%;
+    margin-left: 30%;
+    padding: 1% 2% 3% 2%;
+    color: darkgray;
+    background-color: #FFFDDD;
+    border-color: #FFFDDD   ;
+}
+
+#login_header{
+    margin-bottom: 7%;
+    color: darkgray;
+}
+
+.form-control:focus {
+    border-color: inherit;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border: inherit;
+  }
+
+
+
+.btn_custom{
+    margin-bottom: 7%;
+} 
+
+.btn_logout{
+    background-color: #EAE378;
+    color: white;
+}
+
+.btn_logout:hover{
+    color: white;
+}
+
+.error{
+    color: red
+}
+
+
+/* Login Styles */
+
+/* Importing fonts from Google */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+/* Reseting */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: white;
+}
+
+.wrapper {
+    max-width: 350px;
+    min-height: 500px;
+    margin: 80px auto;
+    padding: 40px 30px 30px 30px;
+    background-color: #FFFDDF;
+    border-radius: 15px;
+    box-shadow: 13px 13px 20px #cbced1, -13px -13px 20px #fff;
+}
+
+.logo {
+    width: 80px;
+    margin: auto;
+}
+
+.logo img {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0px 0px 3px #5f5f5f,
+        0px 0px 0px 5px #ecf0f3,
+        8px 8px 15px #a7aaa7,
+        -8px -8px 15px #fff;
+}
+
+.wrapper .name {
+    font-weight: 600;
+    font-size: 1.4rem;
+    letter-spacing: 1.3px;
+    padding-left: 10px;
+    color: #555;
+}
+
+.wrapper .form-field input {
+    width: 100%;
+    display: block;
+    border: none;
+    outline: none;
+    background: none;
+    font-size: 1.2rem;
+    color: #666;
+    padding: 10px 15px 10px 10px;
+    /* border: 1px solid red; */
+}
+
+.wrapper .form-field {
+    padding-left: 10px;
+    margin-bottom: 20px;
+    border-radius: 20px;
+    /* box-shadow: inset 8px 8px 8px white, inset -8px -8px 8px white; */
+    outline: 3px solid white;
+}
+
+.wrapper .form-field .fas {
+    color: #555;
+}
+
+.wrapper .btn {
+    box-shadow: none;
+    width: 100%;
+    height: 40px;
+    background-color: red;
+    color: #fff;
+    border-radius: 25px;
+    box-shadow: 3px 3px 3px #FFFEF4,
+        -3px -3px 3px #FFFEF4;
+    letter-spacing: 1.3px;
+}
+
+.btn-officer{
+    box-shadow: none;
+    width: 100%;
+    height: 40px;
+    background-color: red;
+    color: #fff;
+    border-radius: 25px;
+    box-shadow: 3px 3px 3px #FFFEF4,
+        -3px -3px 3px #FFFEF4;
+    letter-spacing: 1.3px;
+
+}
+
+
+
+.wrapper .btn:hover {
+    background-color: #EAE378;
+}
+
+.wrapper a {
+    text-decoration: none;
+    font-size: 0.8rem;
+    color: #EAE378;
+}
+
+.wrapper a:hover {
+    color: #EAE378;
+}
+
+@media(max-width: 380px) {
+    .wrapper {
+        margin: 30px 20px;
+        padding: 40px 15px 15px 15px;
+    }
+}
+
+
+#map {
+    height: 100%;
+ }
+
+#map1 {
+    height: 70%;
+ }
+
+ html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+ }
+
+ .form-select{
+    padding: 8px;
+    font-family: "Helvetica";
+    width: 50%;
+    
+ }
+
+ .btn_officer{
+    width: 50%;
+    background-color: red;
+    color: white;
+ }
+
+ .btn_officer:hover{
+    color: white;
+ }
+
+
+ .form-select:focus{
+    outline: none;
+ }
+
+ #form{
+    width: 50%;
+ }
+
+ .first:focus{
+    outline: none;
+    border: none;
+    box-shadow: none;
+ }
+
+.btn:focus{
+    box-shadow: none;
+}
+
+#select:focus{
+    border: none;
+}

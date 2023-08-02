@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<form name="logout_form" style="margin-top: 15px; margin-left: 91%;">
+    <input type="submit" onclick="logout()"  class="btn btn_logout btn-sm" class = 'nav' class="navbar-brand" value="LOGOUT"/>
+</form>
+
+
+<center>
+<div style="margin-top: 8%;">
+    
+
+    <table class="table" style="width : 50%">
+        <thead>
+          <tr class="table-warning">
+            <th scope="col">Label</th>
+            <th scope="col">Info</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Username</td>
+            <td>{{username}}</td>
+          </tr>
+          <tr>
+            <td>Coordinates</td>
+            <td>{{location}}</td>
+          </tr>
+          <tr>
+            <td>Status</td>
+            <td>Active</td>
+          </tr>
+          <tr id="not" class="table-danger"> 
+           
+          </tr>
+        </tbody>
+      </table>
+
+      <div id="accept"></div>
+
+    <br>
+</div>
+</center>
+
+<script>
+
+
+function getNotification() {
+    
+    $.ajax({
+        type: 'GET',
+        url: '/officer_notification',
+        success: function(data, status){
+            if (data == true){
+                alert('ATTENTION: INCIDENT NEARBY!')
+                $('#not').html(
+                    "<td>Notification</td> "+ "<td>" + data + "</td>"
+                )
+
+                $('#accept').html(
+                    "<a href='/officer' style='background-color: red' class='btn btn_logout' class = 'nav' class='navbar-brand'> ACCEPT </a>"
+                )
+            }
+            else{
+                // $('#not').remove(); 
+                $('#not').html(
+                    "<td>Notification</td> "+ "<td>" + data + "</td>"
+                )
+                $('#not').removeClass('table-danger') 
+            }
+        } 
+        
+    }); 
+
+    // ajax call to get data from database
+    setTimeout(getNotification, 20000);   
+}  
+
+
+    function logout(){
+    $.ajax({
+        type: 'POST',
+        url: '/status'
+    });
+}
+
+getNotification();
+</script>
+
+
+{% endblock %}  

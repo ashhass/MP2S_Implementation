@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <text class ='nav' class="navbar-brand" href=""></text>
+          <form name="logout_form"><input type="submit"  class="btn btn_logout btn-sm" class = 'nav' class="navbar-brand" value="LOGOUT"/></form>
+  
+          
+        </div>
+      </nav>
+
+        <div class="container-fluid" id="div1">
+            <img id = 'border' src="{{ url_for('video') }}" width="100%"/>
+
+            <div id="camera_buttons">
+                <div id="btn_ignore"></div>
+                <div id="btn_alert"></div>
+                
+            </div>
+        </div> 
+           
+
+        <div id="div2">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="container-fluid" id="data-container1" >
+        
+                    </div>
+                </div>
+            </div>
+
+
+            <br><br>
+
+
+            <div class="container-fluid"> 
+                <!-- Example row of columns -->
+                <div class="row">
+                    <div class="container-fluid" id="data-container2" >
+        
+                    </div>
+                </div>
+            </div>
+        </div> 
+
+
+      <script>
+        var chartLoss;
+        var chartProb;
+
+
+        function requestData()
+        {
+            // Ajax call to get the Data from Flask
+            var requests = $.get('/data');
+
+
+            var tm = requests.done(function (result)
+            {
+                var seriesLoss = chartLoss.series[0],
+                    shiftLoss = seriesLoss.data.length > 20;
+
+                var seriesProb = chartProb.series[0],
+                    shiftProb = seriesLoss.data.length > 20;
+
+
+                var data1 = [];
+                data1.push(result[0]);
+                data1.push(result[1]);
+
+
+                var data2 = [];
+                data2.push(result[0]);
+                data2.push(result[2]);
+                
+
+                // add the point
+                chartLoss.series[0].addPoint(data1, true, shiftLoss);
+                chartProb.series[0].addPoint(data2, true, shiftProb); 
+
+                // call it again after few seconds
+                setTimeout(requestData, 2000);
+            });
+        }
+
+        function requestNotify()
+        {
+            // Ajax call to get the Data from Flask
+            var requests = $.get('/notify');
+
+
+            var tm = requests.done(function (result)
+            {
+                notify = result[0] 
+                if (notify == true){
+                    $('#btn_ignore').html('<button id="btn1" class="btn btn-outline-warning btn-lg" href="#">IGNORE</button>')
+                    $('#btn_alert').html('<button id="btn2" class="btn btn-outline-danger btn-lg" href="#">ALERT</button>')
+                    $('#border').css('outline', '10px solid red')
+                }
+
+                // call it again after a few seconds
+                setTimeout(requestNotify, 5000);
+            });
+            return notify
+        }
+
+
+        $(document).ready(function() {
+            requestNotify()
+        });
+        
+        $('#btn_ignore').click(function(){ 
+
+                $('#btn_ignore').html('<button id="btn1" class="btn btn-outline-secondary btn-lg" href="#">IGNORED</button>')  
+                $('#btn_alert').html('<button id="btn2" class="btn btn-outline-secondary btn-lg" href="#" disabled>ALERT</button>')  
+                $('#border').css('outline', '')
+
+            }) 
+
+        $('#btn_alert').click(function(){ 
+
+            $('#btn_ignore').html('<button id="btn1" class="btn btn-outline-secondary btn-lg" href="#" disabled>IGNORE</button>')
+            $('#btn_alert').html('<button id="btn2" class="btn btn-outline-secondary btn-lg" href="#">ALERTED</button>')  
+            $('#border').css('outline', '')
+
+            // Call function to compute minimum distance of officer location 
+            $.ajax({
+                type: "POST",
+                url: "/compute_distance",
+                data: { param: 'text'}, 
+                success : function(){
+                   alert('Notification Sent');
+                },
+                error : function(){
+                   alert('Error');
+                }
+
+                });
+
+        }); 
+
+        $(document).ready(function() {
+            chartLoss = new Highcharts.Chart({
+                chart: {
+                    renderTo: 'data-container1',
+                    defaultSeriesType: 'spline',
+                    events: {
+                        load: requestData
+                    }
+                },
+                title: {
+                    text: 'Live Loss Values',
+                },
+                xAxis: {
+                    type: 'datetime',
+                    tickPixelInterval: 150,
+                    maxZoom: 20 * 1000
+                },
+                yAxis: {
+                    minPadding: 0.2,
+                    maxPadding: 0.2,
+                    title: {
+                        text: 'Value',
+                        margin: 80
+                    }
+                },
+                series: [{
+                    name: 'Loss Values',
+                    lineColor: 'red',
+                    color : '#c23d23',
+                    data: [],
+                }],
+
+            });
+
+            chartProb = new Highcharts.Chart({
+                chart: {
+                    renderTo: 'data-container2',
+                    defaultSeriesType: 'spline',
+                    events: {
+                        load: requestData
+                    }
+                },
+                title: {
+                    text: 'Live Probability Values',
+                },
+                xAxis: {
+                    type: 'datetime',
+                    tickPixelInterval: 150,
+                    maxZoom: 20 * 1000
+                },
+                yAxis: {
+                    minPadding: 0.2,
+                    maxPadding: 0.2,
+                    title: {
+                        text: 'Value',
+                        margin: 80
+                    }
+                },
+                series: [{
+                    name: 'Probability Values',
+                    color : '#c23d23',
+                    lineColor: 'yellow',
+                    data: [],
+                }],
+
+            });
+
+        });
+    </script>
+    
+
+
+    {% endblock %}
